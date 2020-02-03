@@ -17,8 +17,8 @@ class ReadInData():
     def __init__(self, file, kwargs_get_raw_data={}, print_details='Minimal'):
         """
         Initialises the ReadInData class instance. __init__ creates
-        instances of internal variables such as __file__, __header__
-        and __raw_data__, and then reads in the raw data from the file.
+        instances of internal variables such as _file, _header
+        and _raw_data, and then reads in the raw data from the file.
 
         Parameters:
         file : (string) The file name to be read in.
@@ -31,10 +31,10 @@ class ReadInData():
         Returns:
         (none) : Does not return any variables.
         """
-        self.__kwargs_get_raw_data__ = kwargs_get_raw_data
-        self.__print_details__ = print_details
-        self.__file__ = file
-        self.__header__ = {'Model': '',
+        self._kwargs_get_raw_data = kwargs_get_raw_data
+        self._print_details = print_details
+        self._file = file
+        self._header = {'Model': '',
                            'Version': '',
                            'Date': '',
                            'Dimension': '',
@@ -43,9 +43,9 @@ class ReadInData():
                            'Description': '',
                            'Length unit': '',
                            'Data Structure': ''}
-        self.__raw_data__ = None
+        self._raw_data = None
 
-        self.get_raw_data(**self.__kwargs_get_raw_data__)
+        self.get_raw_data(**self._kwargs_get_raw_data)
 
     def get_number_of_lines(self):
         """
@@ -59,7 +59,7 @@ class ReadInData():
         Returns:
         (none) : Does not return any variables.
         """
-        with open(self.__file__) as input_file:
+        with open(self._file) as input_file:
             self.n_lines = 0
             self.n_data_per_line = 0
             self.n_header_lines = 0
@@ -74,8 +74,8 @@ class ReadInData():
                 for number in line.split():
                     self.n_data_per_line += 1
                 self.n_lines += 1
-        if self.__print_details__ is True:
-            print("File: {}".format(self.__file__))
+        if self._print_details is True:
+            print("File: {}".format(self._file))
             print("      n_lines: {}".format(self.n_lines))
             print("      n_data_per_line: {}".format(self.n_data_per_line))
             print("      n_header_lines: {}".format(self.n_header_lines))
@@ -85,13 +85,13 @@ class ReadInData():
         """
         Reads in the raw data from the data file. It firstly loops over the
         header and either ignores it or sets the values of the header dict,
-        and then loops over the remaining lines and sets the __raw_data__
+        and then loops over the remaining lines and sets the _raw_data
         varaible to the values on each line.
 
         If the ignore_header flag is set to False then the values of the header
         dict are set to their respective entry from the data file.
 
-        If the the complexData flag is True then the __raw_data__ variable is
+        If the the complexData flag is True then the _raw_data variable is
         initialised as a np.complex128 type rather than np.float64.
 
         Parameters:
@@ -101,61 +101,61 @@ class ReadInData():
 
         complexData : (optional, bool) The flag to specifiy if complex data
                       types are being read in. By default this is False and the
-                      elements of __raw_data__ are set as np.float64.
+                      elements of _raw_data are set as np.float64.
 
         Returns:
         (none) : Does not return any variables.
         """
         self.get_number_of_lines()
-        with open(self.__file__) as input_file:
+        with open(self._file) as input_file:
             if complexData is False:
-                self.__raw_data__ = np.zeros([self.n_data_per_line,
+                self._raw_data = np.zeros([self.n_data_per_line,
                                               self.n_lines - self.n_header_lines])
             elif complexData is True:
-                self.__raw_data__ = np.zeros([self.n_data_per_line,
+                self._raw_data = np.zeros([self.n_data_per_line,
                                               self.n_lines - self.n_header_lines], dtype=np.complex128)
             i = 0
             for line in input_file:
                 if (i < self.n_header_lines):
-                    if ignore_header is True and self.__print_details__ is True:
+                    if ignore_header is True and self._print_details is True:
                         print("get_data(): Skipping header line {} ...".format(i))
                     else:
                         line = line.split()
                         line.pop(0)
                         if line[0] == 'Model:':
-                            if self.__print_details__ is True:
+                            if self._print_details is True:
                                 print("get_data(): In header, Model value found")
-                            self.__header__['Model'] = ' '.join(line[1:])
+                            self._header['Model'] = ' '.join(line[1:])
                         elif line[0] == 'Version:':
-                            if self.__print_details__ is True:
+                            if self._print_details is True:
                                 print("get_data(): In header, Version value found")
-                            self.__header__['Version'] = ' '.join(line[1:])
+                            self._header['Version'] = ' '.join(line[1:])
                         elif line[0] == 'Date:':
-                            if self.__print_details__ is True:
+                            if self._print_details is True:
                                 print("get_data(): In header, Date value found")
-                            self.__header__['Date'] = ' '.join(line[1:])
+                            self._header['Date'] = ' '.join(line[1:])
                         elif line[0] == 'Dimension:':
-                            if self.__print_details__ is True:
+                            if self._print_details is True:
                                 print("get_data(): In header, Dimension value found")
-                            self.__header__['Dimension'] = ' '.join(line[1:])
+                            self._header['Dimension'] = ' '.join(line[1:])
                         elif line[0] == 'Nodes:':
-                            if self.__print_details__ is True:
+                            if self._print_details is True:
                                 print("get_data(): In header, Nodes value found")
-                            self.__header__['Nodes'] = ' '.join(line[1:])
+                            self._header['Nodes'] = ' '.join(line[1:])
                         elif line[0] == 'Expressions:':
-                            if self.__print_details__ is True:
+                            if self._print_details is True:
                                 print("get_data(): In header, Expressions value found")
-                            self.__header__['Expressions'] = ' '.join(line[1:])
+                            self._header['Expressions'] = ' '.join(line[1:])
                         elif line[0] == 'Description:':
-                            if self.__print_details__ is True:
+                            if self._print_details is True:
                                 print("get_data(): In header, Description value found")
-                            self.__header__['Description'] = ' '.join(line[1:])
+                            self._header['Description'] = ' '.join(line[1:])
                         elif line[0] == 'Length' and line[1] == 'unit:':
-                            if self.__print_details__ is True:
+                            if self._print_details is True:
                                 print("get_data(): In header, Length Unit value found")
-                            self.__header__['Length unit'] = ' '.join(line[2:])
+                            self._header['Length unit'] = ' '.join(line[2:])
                         elif i == self.n_header_lines - 1:
-                            if self.__print_details__ is True:
+                            if self._print_details is True:
                                 print("get_data(): In header, Data Structure value assumed as last line of header")
                             tmp = ' '.join(line[2:]).split(" @ ")
                             tmp2 = [tmp[0]]
@@ -163,19 +163,19 @@ class ReadInData():
                             for j in range(len(tmp)):
                                 tmp2 += [tmp[j].replace(tmp2[0], "").strip()]
                             tmp3 = [tmp2[0], tmp2[1:]]
-                            self.__header__['Data Structure'] = [line[0]] + [line[1]] + tmp3
+                            self._header['Data Structure'] = [line[0]] + [line[1]] + tmp3
                 else:
                     line = line.strip()
                     j = 0
                     for number in line.split():
                         if complexData is False:
-                            self.__raw_data__[j, i - self.n_header_lines] = number
+                            self._raw_data[j, i - self.n_header_lines] = number
                         elif complexData is True:
-                            self.__raw_data__[j, i - self.n_header_lines] = complex(number.replace('i', 'j'))
+                            self._raw_data[j, i - self.n_header_lines] = complex(number.replace('i', 'j'))
                         j += 1
                 i += 1
-            if self.__print_details__ == 'Minimal':
-                print("get_data(): Read in data of shape {} from file '{}'".format(np.shape(self.__raw_data__), self.__file__))
+            if self._print_details == 'Minimal':
+                print("get_data(): Read in data of shape {} from file '{}'".format(np.shape(self._raw_data), self._file))
 
     def header_details(self):
         """
@@ -194,39 +194,39 @@ class ReadInData():
 
     def raw_data(self):
         """
-        Function to return the encapsulated variable __raw_data__.
+        Function to return the encapsulated variable _raw_data.
 
         Parameters:
         (none) : Does not take any input parameters.
 
         Returns:
-        self.__raw_data__ : (numpy array) The raw data.
+        self._raw_data : (numpy array) The raw data.
         """
-        return self.__raw_data__
+        return self._raw_data
 
     def file(self):
         """
-        Function to return the encapsulated variable __file__.
+        Function to return the encapsulated variable _file.
 
         Parameters:
         (none) : Does not take any input parameters.
 
         Returns:
-        self.__raw_data__ : (numpy array) The file name.
+        self._raw_data : (numpy array) The file name.
         """
-        return self.__file__
+        return self._file
 
     def header(self):
         """
-        Function to return the encapsulated variable __header__.
+        Function to return the encapsulated variable _header.
 
         Parameters:
         (none) : Does not take any input parameters.
 
         Returns:
-        self.__raw_data__ : (dict) The header.
+        self._raw_data : (dict) The header.
         """
-        return self.__header__
+        return self._header
 
 
 class Plot():
@@ -236,7 +236,7 @@ class Plot():
     def __init__(self, X, Y):
         """
         Initialises the Plot class instance. __init__ creates
-        instances of internal variables such as __X__, __Y__, xlim,
+        instances of internal variables such as _X, _Y, xlim,
         and ylim.
 
         Parameters:
@@ -247,10 +247,10 @@ class Plot():
         Returns:
         (none) : Does not return any variables.
         """
-        self.__X__ = X
-        self.__Y__ = Y
-        self.__xlim__ = [np.min(self.__X__), np.max(self.__X__)]
-        self.__ylim__ = [np.min(self.__Y__), np.max(self.__Y__)]
+        self._X = X
+        self._Y = Y
+        self._xlim = [np.min(self._X), np.max(self._X)]
+        self._ylim = [np.min(self._Y), np.max(self._Y)]
 
     def pcolor(self, Z, n_plots, cmap="hot",
                sub_title=None, title=None, axis_titles=None,
@@ -319,20 +319,20 @@ class Plot():
 
         if xlim is None:
             if n_plots == 1:
-                xlim = self.__xlim__
+                xlim = self._xlim
             elif n_plots > 1:
-                xlim = [self.__xlim__]*n_plots
+                xlim = [self._xlim]*n_plots
         if ylim is None:
             if n_plots == 1:
-                ylim = self.__ylim__
+                ylim = self._ylim
             elif n_plots > 1:
-                ylim = [self.__ylim__]*n_plots
+                ylim = [self._ylim]*n_plots
 
         fig = plt.figure(figsize=figsize, dpi=dpi)
         fig.suptitle(title)
         if n_plots == 1:
             ax1 = fig.add_subplot(1, 1, 1)
-            ax1.pcolor(self.__X__, self.__Y__, Z, cmap=cmap)
+            ax1.pcolor(self._X, self._Y, Z, cmap=cmap)
             ax1.set_xlim([xlim[0], xlim[1]])
             ax1.set_ylim([ylim[0], ylim[1]])
             ax1.set_xlabel(axis_titles[0])
@@ -341,7 +341,7 @@ class Plot():
         else:
             for i in range(n_plots):
                 ax1 = fig.add_subplot(1, n_plots, i+1)
-                ax1.pcolor(self.__X__, self.__Y__, Z[i], cmap=cmap)
+                ax1.pcolor(self._X, self._Y, Z[i], cmap=cmap)
                 ax1.set_xlim([xlim[i][0], xlim[i][1]])
                 ax1.set_ylim([ylim[i][0], ylim[i][1]])
                 ax1.set_xlabel(axis_titles[i][0])
@@ -419,20 +419,20 @@ class Plot():
 
         if xlim is None:
             if n_plots == 1:
-                xlim = self.__xlim__
+                xlim = self._xlim
             elif n_plots > 1:
-                xlim = [self.__xlim__]*n_plots
+                xlim = [self._xlim]*n_plots
         if ylim is None:
             if n_plots == 1:
-                ylim = self.__ylim__
+                ylim = self._ylim
             elif n_plots > 1:
-                ylim = [self.__ylim__]*n_plots
+                ylim = [self._ylim]*n_plots
 
         fig = plt.figure(figsize=figsize, dpi=dpi)
         fig.suptitle(title)
         if n_plots == 1:
             ax1 = fig.add_subplot(1, 1, 1)
-            ax1.contourf(self.__X__, self.__Y__, Z, n_lines)
+            ax1.contourf(self._X, self._Y, Z, n_lines)
             ax1.set_xlim([xlim[0], xlim[1]])
             ax1.set_ylim([ylim[0], ylim[1]])
             ax1.set_xlabel(axis_titles[0])
@@ -441,7 +441,7 @@ class Plot():
         else:
             for i in range(n_plots):
                 ax1 = fig.add_subplot(1, n_plots, i+1)
-                ax1.contourf(self.__X__, self.__Y__, Z[i], n_lines)
+                ax1.contourf(self._X, self._Y, Z[i], n_lines)
                 ax1.set_xlim([xlim[i][0], xlim[i][1]])
                 ax1.set_ylim([ylim[i][0], ylim[i][1]])
                 ax1.set_xlabel(axis_titles[i][0])
@@ -573,7 +573,7 @@ class Data(ReadInData, Plot):
                  kwargs_Data={}, kwargs_ReadInData={}, kwargs_grid={}):
         """
         Initialises the Data class instance. __init__ creates instances of
-        internal variables such as kwargs_ReadInData, kwargs_grid and __Data__,
+        internal variables such as kwargs_ReadInData, kwargs_grid and _Data,
         and then initialises the ReadInData class and the Plot class.
 
         Parameters:
@@ -592,19 +592,19 @@ class Data(ReadInData, Plot):
         (none) : Does not return any variables.
         """
         # self.kwargs_ReadInData = kwargs_ReadInData
-        self.__kwargs_Data__ = kwargs_Data
-        self.__kwargs_ReadInData__ = kwargs_ReadInData
-        self.__kwargs_grid__ = kwargs_grid
-        self.__x__ = None
-        self.__y__ = None
-        self.__data__ = None
-        self.__X__ = None
-        self.__Y__ = None
-        self.__Data__ = None
+        self._kwargs_Data = kwargs_Data
+        self._kwargs_ReadInData = kwargs_ReadInData
+        self._kwargs_grid = kwargs_grid
+        self._x = None
+        self._y = None
+        self._data = None
+        self._X = None
+        self._Y = None
+        self._Data = None
 
-        ReadInData.__init__(self, file, self.__kwargs_ReadInData__)
+        ReadInData.__init__(self, file, self._kwargs_ReadInData)
         self.format_raw_data()
-        self.grid(**self.__kwargs_grid__)
+        self.grid(**self._kwargs_grid)
         self.format_data()
 
         Plot.__init__(self, self.X(), self.Y())
@@ -619,9 +619,9 @@ class Data(ReadInData, Plot):
         Returns:
         (none) : Does not return any variables.
         """
-        self.__x__ = self.__raw_data__[0, :]
-        self.__y__ = self.__raw_data__[1, :]
-        self.__data__ = self.__raw_data__[2:, :]
+        self._x = self._raw_data[0, :]
+        self._y = self._raw_data[1, :]
+        self._data = self._raw_data[2:, :]
 
     def format_data(self):
         """
@@ -633,9 +633,9 @@ class Data(ReadInData, Plot):
         Returns:
         (none) : Does not return any variables.
         """
-        self.__X__ = np.nan_to_num(self.__X__)
-        self.__Y__ = np.nan_to_num(self.__Y__)
-        self.__Data__ = np.nan_to_num(self.__Data__)
+        self._X = np.nan_to_num(self._X)
+        self._Y = np.nan_to_num(self._Y)
+        self._Data = np.nan_to_num(self._Data)
 
     def grid(self, res=1, resX=None, resY=None):
         """
@@ -654,25 +654,25 @@ class Data(ReadInData, Plot):
         Returns:
         (none) : Does not return any variables.
         """
-        if 'complexData' in self.__kwargs_Data__ and self.__kwargs_Data__['complexData'] == True:
+        if 'complexData' in self._kwargs_Data and self._kwargs_Data['complexData'] == True:
             print("grid(): Warning, complex data type present, unable to grid data...\n")
-            self.__X__ = self.__x__
-            self.__Y__ = self.__y__
-            self.__Data__ = self.__data__
+            self._X = self._x
+            self._Y = self._y
+            self._Data = self._data
         else:
             if resX == None or resY == None:
-                resX = (np.max(self.__x__) - np.min(self.__x__))*res
-                resY = (np.max(self.__y__) - np.min(self.__y__))*res
-            n_modes = np.shape(self.__data__)[0]
-            xi = np.linspace(np.min(self.__x__), np.max(self.__x__), resX)
-            yi = np.linspace(np.min(self.__y__), np.max(self.__y__), resY)
+                resX = (np.max(self._x) - np.min(self._x))*res
+                resY = (np.max(self._y) - np.min(self._y))*res
+            n_modes = np.shape(self._data)[0]
+            xi = np.linspace(np.min(self._x), np.max(self._x), resX)
+            yi = np.linspace(np.min(self._y), np.max(self._y), resY)
             if n_modes == 1:
-                self.__Data__ = griddata(self.__x__, self.__y__, self.__data__, xi, yi, interp='linear')
+                self._Data = griddata(self._x, self._y, self._data, xi, yi, interp='linear')
             else:
-                self.__Data__ = np.zeros([n_modes, int(resY), int(resX)])
+                self._Data = np.zeros([n_modes, int(resY), int(resX)])
                 for i in range(n_modes):
-                    self.__Data__[i] = griddata(self.__x__, self.__y__, self.__data__[i], xi, yi, interp='linear')
-            self.__X__, self.__Y__ = np.meshgrid(xi, yi)
+                    self._Data[i] = griddata(self._x, self._y, self._data[i], xi, yi, interp='linear')
+            self._X, self._Y = np.meshgrid(xi, yi)
 
     def data_details(self):
         """
@@ -685,169 +685,169 @@ class Data(ReadInData, Plot):
         (none) : Does not return any variables.
         """
         print("\n{} data details:".format(self.header()['Description']))
-        print ("      x: {}".format(np.shape(self.__x__)))
-        print ("      y: {}".format(np.shape(self.__y__)))
-        print ("      data: {}".format(np.shape(self.__data__)))
-        print ("      X: {}".format(np.shape(self.__X__)))
-        print ("      Y: {}".format(np.shape(self.__Y__)))
-        print ("      Data: {}\n".format(np.shape(self.__Data__)))
+        print ("      x: {}".format(np.shape(self._x)))
+        print ("      y: {}".format(np.shape(self._y)))
+        print ("      data: {}".format(np.shape(self._data)))
+        print ("      X: {}".format(np.shape(self._X)))
+        print ("      Y: {}".format(np.shape(self._Y)))
+        print ("      Data: {}\n".format(np.shape(self._Data)))
 
     def x(self):
         """
-        Function to return the encapsulated variable __x__.
+        Function to return the encapsulated variable _x.
 
         Parameters:
         (none) : Does not take any input parameters.
 
         Returns:
-        self.__x__ : (numpy array) The x variable.
+        self._x : (numpy array) The x variable.
         """
-        return self.__x__
+        return self._x
 
     def y(self):
         """
-        Function to return the encapsulated variable __y__.
+        Function to return the encapsulated variable _y.
 
         Parameters:
         (none) : Does not take any input parameters.
 
         Returns:
-        self.__y__ : (numpy array) The y variable.
+        self._y : (numpy array) The y variable.
         """
-        return self.__y__
+        return self._y
 
     def data(self):
         """
-        Function to return the encapsulated variable __data__.
+        Function to return the encapsulated variable _data.
 
         Parameters:
         (none) : Does not take any input parameters.
 
         Returns:
-        self.__data__ : (numpy array) The data variable.
+        self._data : (numpy array) The data variable.
         """
-        return self.__data__
+        return self._data
 
     def X(self):
         """
-        Function to return the encapsulated variable __X__.
+        Function to return the encapsulated variable _X.
 
         Parameters:
         (none) : Does not take any input parameters.
 
         Returns:
-        self.__X__ : (numpy array) The X variable.
+        self._X : (numpy array) The X variable.
         """
-        return self.__X__
+        return self._X
 
     def Y(self):
         """
-        Function to return the encapsulated variable __Y__.
+        Function to return the encapsulated variable _Y.
 
         Parameters:
         (none) : Does not take any input parameters.
 
         Returns:
-        self.__Y__ : (numpy array) The Y variable.
+        self._Y : (numpy array) The Y variable.
         """
-        return self.__Y__
+        return self._Y
 
     def Data(self):
         """
-        Function to return the encapsulated variable __Data__.
+        Function to return the encapsulated variable _Data.
 
         Parameters:
         (none) : Does not take any input parameters.
 
         Returns:
-        self.__Data__ : (numpy array) The Data variable.
+        self._Data : (numpy array) The Data variable.
         """
-        return self.__Data__
+        return self._Data
 
 
 class NonlinearOptics():
 
     def __init__(self, X, Y, E_w, E_2w, effective_mode_index_w, effective_mode_index_2w, fundamental_mode_index=0, lamda=1550.0E-9, T_Op=20.0, solve=True):
-        self.__X__ = X
-        self.__Y__ = Y
-        self.__E_w__ = E_w    # Fundamental mode of source
+        self._X = X
+        self._Y = Y
+        self._E_w = E_w    # Fundamental mode of source
         if np.ndim(E_2w) == 1:
-            self.__E_2w__ = [E_2w, ]  # Single mode of the second harmonic
+            self._E_2w = [E_2w, ]  # Single mode of the second harmonic
         else:
-            self.__E_2w__ = E_2w  # Multiple modes of the second harmonic
-        self.__effective_mode_index_w__ = effective_mode_index_w
+            self._E_2w = E_2w  # Multiple modes of the second harmonic
+        self._effective_mode_index_w = effective_mode_index_w
 
 
         if np.ndim(effective_mode_index_2w) == 1:
-            self.__effective_mode_index_2w__ = [effective_mode_index_2w, ]
+            self._effective_mode_index_2w = [effective_mode_index_2w, ]
         else:
-            self.__effective_mode_index_2w__ = effective_mode_index_2w
-        self.__effective_mode_index_2w__ = effective_mode_index_2w
+            self._effective_mode_index_2w = effective_mode_index_2w
+        self._effective_mode_index_2w = effective_mode_index_2w
 
-        self.__fundamental_mode_index__ = fundamental_mode_index
-
-
-        self.__lamda_w__ = lamda
-        self.__lamda_2w__ = self.__lamda_w__ / 2.0
-
-        self.__T_Op__ = T_Op
+        self._fundamental_mode_index = fundamental_mode_index
 
 
-        self.__c__ = 299792458               # Speed of light
-        self.__mu_0__ = 4*np.pi*1.0E-7       # Permeability of free space
-        self.__epsilon_0__ = 8.85418782e-12  # Permitivity of free space
-        self.__omega_w__ = 2*np.pi * self.__c__ / self.__lamda_w__
-        self.__omega_2w__ = 2*np.pi * self.__c__ / self.__lamda_2w__
-        self.__d_eff__ = 14.0E-12             # deff
+        self._lamda_w = lamda
+        self._lamda_2w = self._lamda_w / 2.0
+
+        self._T_Op = T_Op
+
+
+        self._c = 299792458               # Speed of light
+        self._mu_0 = 4*np.pi*1.0E-7       # Permeability of free space
+        self._epsilon_0 = 8.85418782e-12  # Permitivity of free space
+        self._omega_w = 2*np.pi * self._c / self._lamda_w
+        self._omega_2w = 2*np.pi * self._c / self._lamda_2w
+        self._d_eff = 14.0E-12            # deff
 
         # Default values for solving in the z direction of the waveguide
-        self.__z_max__ = 50E-3
-        self.__z_points__ = 500
-        self.__z__ = np.arange(0, self.__z_max__, self.__z_max__/self.__z_points__)
-        self.__ODE_rtol__ = 1.0E-4
+        self._z_max = 50E-3
+        self._z_points = 500
+        self._z = np.arange(0, self._z_max, self._z_max/self._z_points)
+        self._ODE_rtol = 1.0E-4
 
-        self.__amplitude_solutions__ = None
-        self.__conversion_efficiency__ = None
+        self._amplitude_solutions = None
+        self._conversion_efficiency = None
 
-        self.__propagation_constant_w__ = None
-        self.__normalisation_factor_w__ = None
-        self.__propagation_constant_2w__ = None
-        self.__normalisation_factor_2w__ = None
-        self.__E_w_norm__ = None
-        self.__E_2w_norm__ = None
-        self.__nonlinear_coupling_coefficient__ = None
+        self._propagation_constant_w = None
+        self._normalisation_factor_w = None
+        self._propagation_constant_2w = None
+        self._normalisation_factor_2w = None
+        self._E_w_norm = None
+        self._E_2w_norm = None
+        self._nonlinear_coupling_coefficient = None
 
-        self.__effective_nonlinear_coefficient__ = None
-        self.__delta_k__ = (4 * np.pi / self.__lamda_w__) * (self.__sellmeier_equation__(self.__lamda_2w__, self.__T_Op__) - self.__sellmeier_equation__(self.__lamda_w__, self.__T_Op__))
-        self.__coherent_length__ = self.__lamda_w__ / (4*(np.real(self.__effective_mode_index_2w__) - np.real(self.__effective_mode_index_w__)))
-        self.__inversion_period__ = 2*self.__coherent_length__
-        self.__effective_mode_overlap__ = None
-        self.__effective_cross_section__ = None
+        self._effective_nonlinear_coefficient = None
+        self._delta_k = (4 * np.pi / self._lamda_w) * (self._sellmeier_equation(self._lamda_2w, self._T_Op) - self._sellmeier_equation(self._lamda_w, self._T_Op))
+        self._coherent_length = self._lamda_w / (4*(np.real(self._effective_mode_index_2w) - np.real(self._effective_mode_index_w)))
+        self._inversion_period = 2*self._coherent_length
+        self._effective_mode_overlap = None
+        self._effective_cross_section = None
 
-        self.__set_propagation_constant_w__()
-        self.__set_propagation_constant_2w__()
-        self.__set_normalisation_factor_w__()
-        self.__set_normalisation_factor_2w__()
-        self.__set_E_w_norm__()
-        self.__set_E_2w_norm__()
+        self._set_propagation_constant_w()
+        self._set_propagation_constant_2w()
+        self._set_normalisation_factor_w()
+        self._set_normalisation_factor_2w()
+        self._set_E_w_norm()
+        self._set_E_2w_norm()
 
-        self.__set_effective_cross_section__()
-        self.__set_nonlinear_coupling_coefficient__()
+        self._set_effective_cross_section()
+        self._set_nonlinear_coupling_coefficient()
 
         if solve is True:
-            self.__solve_amplitude_coupled_ODEs__()
+            self._solve_amplitude_coupled_ODEs()
 
-        assert not isinstance(self.__propagation_constant_w__, type(None))
-        assert not isinstance(self.__normalisation_factor_w__, type(None))
-        assert not isinstance(self.__propagation_constant_2w__, type(None))
-        assert not isinstance(self.__normalisation_factor_2w__, type(None))
+        assert not isinstance(self._propagation_constant_w, type(None))
+        assert not isinstance(self._normalisation_factor_w, type(None))
+        assert not isinstance(self._propagation_constant_2w, type(None))
+        assert not isinstance(self._normalisation_factor_2w, type(None))
 
-        assert not isinstance(self.__E_w_norm__, type(None)), \
-            ("NonLinearOptics.__init__(): __E_w_norm__ of type %r" % (type(self.__E_w_norm__ )))
-        assert not isinstance(self.__E_2w_norm__, type(None)), \
-            ("NonLinearOptics.__init__(): __E_w_norm__ of type %r" % (type(self.__E_2w_norm__ )))
+        assert not isinstance(self._E_w_norm, type(None)), \
+            ("NonLinearOptics.__init__(): _E_w_norm of type %r" % (type(self._E_w_norm )))
+        assert not isinstance(self._E_2w_norm, type(None)), \
+            ("NonLinearOptics.__init__(): _E_w_norm of type %r" % (type(self._E_2w_norm )))
 
-    def __sellmeier_equation__(self, lam, T):
+    def _sellmeier_equation(self, lam, T):
         """
         Remember the operational temperature, T, is in oC not K here!
         """
@@ -867,111 +867,111 @@ class NonlinearOptics():
 
         return np.sqrt(a1 + b1*f + (a2 + b2*f)/(lam**2 - (a3 + b3*f)**2) + (a4 + b4*f)/(lam**2 - a5**2) - a6*lam**2)
 
-    def __set_propagation_constant_w__(self):
-        self.__propagation_constant_w__ = self.__effective_mode_index_w__ * 2*np.pi / self.__lamda_w__
-        print("__set_propagation_constant_w__(): Propagation constant set.")
+    def _set_propagation_constant_w(self):
+        self._propagation_constant_w = self._effective_mode_index_w * 2*np.pi / self._lamda_w
+        print("_set_propagation_constant_w(): Propagation constant set.")
 
-    def __set_propagation_constant_2w__(self):
-        self.__propagation_constant_2w__ = np.zeros(np.shape(self.__effective_mode_index_2w__)[0], dtype=np.complex128)
-        for i in range(len(self.__propagation_constant_2w__)):
-            self.__propagation_constant_2w__[i] = self.__effective_mode_index_2w__[i] * 2*np.pi / self.__lamda_2w__
-        print("__set_propagation_constant_2w__(): Propagation constant set.")
+    def _set_propagation_constant_2w(self):
+        self._propagation_constant_2w = np.zeros(np.shape(self._effective_mode_index_2w)[0], dtype=np.complex128)
+        for i in range(len(self._propagation_constant_2w)):
+            self._propagation_constant_2w[i] = self._effective_mode_index_2w[i] * 2*np.pi / self._lamda_2w
+        print("_set_propagation_constant_2w(): Propagation constant set.")
 
-    def __set_normalisation_factor_w__(self):
-        self.__normalisation_factor_w__ = np.power(self.__propagation_constant_w__ /(2*self.__omega_w__*self.__mu_0__) *
-            simps(simps(np.abs(self.__E_w__)**2, self.__X__[0,:]), self.__Y__[:,0]), -0.5)
+    def _set_normalisation_factor_w(self):
+        self._normalisation_factor_w = np.power(self._propagation_constant_w /(2*self._omega_w*self._mu_0) *
+            simps(simps(np.abs(self._E_w)**2, self._X[0,:]), self._Y[:,0]), -0.5)
 
-    def __set_normalisation_factor_2w__(self):
-        self.__normalisation_factor_2w__ = np.zeros(np.shape(self.__E_2w__)[0], dtype=np.complex128)
-        for i in range(len(self.__normalisation_factor_2w__)):
-            self.__normalisation_factor_2w__[i] = np.power(self.__propagation_constant_2w__[i] /(2*2*self.__omega_w__*self.__mu_0__) *
-                simps(simps(np.abs(self.__E_2w__[i])**2, self.__X__[0,:]), self.__Y__[:,0]), -0.5)
+    def _set_normalisation_factor_2w(self):
+        self._normalisation_factor_2w = np.zeros(np.shape(self._E_2w)[0], dtype=np.complex128)
+        for i in range(len(self._normalisation_factor_2w)):
+            self._normalisation_factor_2w[i] = np.power(self._propagation_constant_2w[i] /(2*2*self._omega_w*self._mu_0) *
+                simps(simps(np.abs(self._E_2w[i])**2, self._X[0,:]), self._Y[:,0]), -0.5)
 
-    def __set_E_w_norm__(self):
-        assert not isinstance(self.__normalisation_factor_w__, type(None)), \
-            ("NonLinearOptics.__set_E_w_norm__(): __normalisation_factor_w__ of type %r"
-             % (type(self.__normalisation_factor_w__ )))
-        assert not isinstance(self.__E_w__, type(None)), \
-            ("NonLinearOptics.__set_E_w_norm__(): __E_w__ of type %r" % (type(self.__E_w__ )))
+    def _set_E_w_norm(self):
+        assert not isinstance(self._normalisation_factor_w, type(None)), \
+            ("NonLinearOptics._set_E_w_norm(): _normalisation_factor_w of type %r"
+             % (type(self._normalisation_factor_w )))
+        assert not isinstance(self._E_w, type(None)), \
+            ("NonLinearOptics._set_E_w_norm(): _E_w of type %r" % (type(self._E_w )))
 
-        self.__E_w_norm__ = self.__normalisation_factor_w__ * self.__E_w__
+        self._E_w_norm = self._normalisation_factor_w * self._E_w
 
-    def __set_E_2w_norm__(self):
-        assert not isinstance(self.__normalisation_factor_2w__, type(None)), \
-            ("NonLinearOptics.__set_E_2w_norm__(): __normalisation_factor_2w__ of type %r"
-             % (type(self.__normalisation_factor_2w__ )))
-        assert not isinstance(self.__E_2w__, type(None)), \
-            ("NonLinearOptics.__set_E_2w_norm__(): __E_2w__ of type %r" % (type(self.__E_2w__ )))
+    def _set_E_2w_norm(self):
+        assert not isinstance(self._normalisation_factor_2w, type(None)), \
+            ("NonLinearOptics._set_E_2w_norm(): _normalisation_factor_2w of type %r"
+             % (type(self._normalisation_factor_2w )))
+        assert not isinstance(self._E_2w, type(None)), \
+            ("NonLinearOptics._set_E_2w_norm(): _E_2w of type %r" % (type(self._E_2w )))
 
-        self.__E_2w_norm__ = np.zeros_like(self.__E_2w__, dtype=np.complex128)
-        for i in range(np.shape(self.__normalisation_factor_2w__)[0]):
-            self.__E_2w_norm__[i] = self.__normalisation_factor_2w__[i] * self.__E_2w__[i]
+        self._E_2w_norm = np.zeros_like(self._E_2w, dtype=np.complex128)
+        for i in range(np.shape(self._normalisation_factor_2w)[0]):
+            self._E_2w_norm[i] = self._normalisation_factor_2w[i] * self._E_2w[i]
 
-    def __set_effective_cross_section__(self):
-        assert not isinstance(self.__E_2w_norm__, type(None)), \
-            ("NonLinearOptics.__set_effective_cross_section__(): __E_2w_norm__ of type %r"
-             % (type(self.__E_2w_norm__ )))
-        assert not isinstance(self.__E_w_norm__, type(None)), \
-            ("NonLinearOptics.__set_effective_cross_section__(): __E_w_norm__ of type %r" % (type(self.__E_w_norm__ )))
+    def _set_effective_cross_section(self):
+        assert not isinstance(self._E_2w_norm, type(None)), \
+            ("NonLinearOptics._set_effective_cross_section(): _E_2w_norm of type %r"
+             % (type(self._E_2w_norm )))
+        assert not isinstance(self._E_w_norm, type(None)), \
+            ("NonLinearOptics._set_effective_cross_section(): _E_w_norm of type %r" % (type(self._E_w_norm )))
 
-        assert not isinstance(self.__X__, type(None)), \
-            ("NonLinearOptics.__set_effective_cross_section__(): __X__ of type %r"
-             % (type(self.__X__ )))
-        assert not isinstance(self.__Y__, type(None)), \
-            ("NonLinearOptics.__set_effective_cross_section__(): __Y__ of type %r" % (type(self.__Y__ )))
+        assert not isinstance(self._X, type(None)), \
+            ("NonLinearOptics._set_effective_cross_section(): _X of type %r"
+             % (type(self._X )))
+        assert not isinstance(self._Y, type(None)), \
+            ("NonLinearOptics._set_effective_cross_section(): _Y of type %r" % (type(self._Y )))
 
-        self.__effective_cross_section__ = np.zeros(np.shape(self.__E_2w_norm__)[0])
-        for i in range(len(self.__effective_cross_section__)):
-            self.__effective_cross_section__[i] = np.real(simps(simps(np.abs(self.__E_2w_norm__[i])**2, self.__X__[0, :]), self.__Y__[:, 0]) *
-                (simps(simps(np.abs(self.__E_w_norm__)**2, self.__X__[0, :]), self.__Y__[:, 0]))**2 /
-                (simps(simps(np.conjugate(self.__E_2w_norm__[i])*self.__E_w_norm__**2, self.__X__[0, :]), self.__Y__[:, 0]))**2)
+        self._effective_cross_section = np.zeros(np.shape(self._E_2w_norm)[0])
+        for i in range(len(self._effective_cross_section)):
+            self._effective_cross_section[i] = np.real(simps(simps(np.abs(self._E_2w_norm[i])**2, self._X[0, :]), self._Y[:, 0]) *
+                (simps(simps(np.abs(self._E_w_norm)**2, self._X[0, :]), self._Y[:, 0]))**2 /
+                (simps(simps(np.conjugate(self._E_2w_norm[i])*self._E_w_norm**2, self._X[0, :]), self._Y[:, 0]))**2)
 
-    def __set_nonlinear_coupling_coefficient__(self):
-        self.__nonlinear_coupling_coefficient__ = np.zeros(np.shape(self.__E_2w_norm__)[0], dtype=np.complex128)
-        for i in range(len(self.__nonlinear_coupling_coefficient__)):
-            self.__nonlinear_coupling_coefficient__[i] = self.__epsilon_0__ * np.sqrt(((2*self.__omega_w__)**2 /
-                                                      (2 * (self.__effective_mode_index_w__)**2 * self.__effective_mode_index_2w__[i])) *
-                                                      np.power(self.__mu_0__/self.__epsilon_0__, 3/2) *
-                                                      (self.__d_eff__**2/self.__effective_cross_section__[i]))
+    def _set_nonlinear_coupling_coefficient(self):
+        self._nonlinear_coupling_coefficient = np.zeros(np.shape(self._E_2w_norm)[0], dtype=np.complex128)
+        for i in range(len(self._nonlinear_coupling_coefficient)):
+            self._nonlinear_coupling_coefficient[i] = self._epsilon_0 * np.sqrt(((2*self._omega_w)**2 /
+                                                      (2 * (self._effective_mode_index_w)**2 * self._effective_mode_index_2w[i])) *
+                                                      np.power(self._mu_0/self._epsilon_0, 3/2) *
+                                                      (self._d_eff**2/self._effective_cross_section[i]))
 
-    def __set_normalised_conversion_efficiency__(self):
-        assert not isinstance(self.__nonlinear_coupling_coefficient__, type(None)), \
-            ("NonLinearOptics.__set_normalised_conversion_efficiency__(): __nonlinear_coupling_coefficient__ of type %r" % (type(self.__nonlinear_coupling_coefficient__ )))
-        assert not isinstance(self.__propagation_constant_2w__, type(None)), \
-            ("NonLinearOptics.__set_normalised_conversion_efficiency__(): __propagation_constant_2w__ of type %r" % (type(self.__propagation_constant_2w__ )))
-        assert not isinstance(self.__propagation_constant_w__, type(None)), \
-            ("NonLinearOptics.__set_normalised_conversion_efficiency__(): __propagation_constant_w__ of type %r" % (type(self.__propagation_constant_w__ )))
+    def _set_normalised_conversion_efficiency(self):
+        assert not isinstance(self._nonlinear_coupling_coefficient, type(None)), \
+            ("NonLinearOptics._set_normalised_conversion_efficiency(): _nonlinear_coupling_coefficient of type %r" % (type(self._nonlinear_coupling_coefficient )))
+        assert not isinstance(self._propagation_constant_2w, type(None)), \
+            ("NonLinearOptics._set_normalised_conversion_efficiency(): _propagation_constant_2w of type %r" % (type(self._propagation_constant_2w )))
+        assert not isinstance(self._propagation_constant_w, type(None)), \
+            ("NonLinearOptics._set_normalised_conversion_efficiency(): _propagation_constant_w of type %r" % (type(self._propagation_constant_w )))
         assert not isinstance(self.delta_k, type(None)), \
-            ("NonLinearOptics.__set_normalised_conversion_efficiency__(): delta_k of type %r" % (type(self.delta_k )))
+            ("NonLinearOptics._set_normalised_conversion_efficiency(): delta_k of type %r" % (type(self.delta_k )))
         assert not isinstance(z, type(None)), \
-            ("NonLinearOptics.__set_normalised_conversion_efficiency__(): z of type %r" % (type(z )))
+            ("NonLinearOptics._set_normalised_conversion_efficiency(): z of type %r" % (type(z )))
 
-        self.__normalised_conversion_efficiency__ = np.zeros([np.shape(self.__E_2w_norm__)[0], len(self.__z__)])
-        for i in range(len(self.__normalised_conversion_efficiency__)):
-            self.__normalised_conversion_efficiency__[i] = (self.__nonlinear_coupling_coefficient__[i]**2 *
-                                                         np.sinc((self.__propagation_constant_2w__[i] - 2*self.__propagation_constant_w__)
-                                                         - 2*np.pi/(2*np.pi/self.__delta_k__) * self.__z__/2)**2)
-        return self.__normalised_conversion_efficiency__
+        self._normalised_conversion_efficiency = np.zeros([np.shape(self._E_2w_norm)[0], len(self._z)])
+        for i in range(len(self._normalised_conversion_efficiency)):
+            self._normalised_conversion_efficiency[i] = (self._nonlinear_coupling_coefficient[i]**2 *
+                                                         np.sinc((self._propagation_constant_2w[i] - 2*self._propagation_constant_w)
+                                                         - 2*np.pi/(2*np.pi/self._delta_k) * self._z/2)**2)
+        return self._normalised_conversion_efficiency
 
     def set_ODE_rtol_(self, rtol):
-        self.__ODE_rtol__ = rtol
+        self._ODE_rtol = rtol
 
     def set_z_max(self, z_max):
-        self.__z_max__ = z_max
+        self._z_max = z_max
 
     def set_z_points(self, z_points):
-        self.__z_points__ = z_points
+        self._z_points = z_points
 
-    def __solve_amplitude_coupled_ODEs__(self):
+    def _solve_amplitude_coupled_ODEs(self):
         """
         Defines the differential equations for the system.
         """
-        print("__solve_amplitude_coupled_ODEs__(): Solving system...")
+        print("_solve_amplitude_coupled_ODEs(): Solving system...")
 
-        P = (0.5*self.__effective_mode_index_w__*self.__epsilon_0__*self.__c__ *
-                np.real(simps(simps(np.abs(self.__E_w_norm__)**2, self.__X__[0,:]), self.__Y__[:,0])))
+        P = (0.5*self._effective_mode_index_w*self._epsilon_0*self._c *
+                np.real(simps(simps(np.abs(self._E_w_norm)**2, self._X[0,:]), self._Y[:,0])))
         AB0 = np.array([np.sqrt(P), 0.0], dtype='complex')
-        k = self.__nonlinear_coupling_coefficient__
+        k = self._nonlinear_coupling_coefficient
         def system(AB, z, k, Lamda, Delta):
             dABdz=np.zeros(2,dtype='complex')
             A = AB[0] + AB[1]*1j
@@ -981,162 +981,162 @@ class NonlinearOptics():
             dABdz[1] = -1j * kk * (np.abs(A))**2 * np.exp(1j*Delta*z)
             return dABdz.view(np.float64)
 
-        AB = np.zeros([len(self.__z__),2])
-        AB_sol = np.zeros([np.shape(self.__E_2w_norm__)[0], len(self.__z__), 2], dtype=np.complex128)
-        eta = np.zeros([np.shape(self.__E_2w_norm__)[0], len(self.__z__)])
-        for i in range(len(self.__E_2w_norm__)):
-            k = np.real(self.__nonlinear_coupling_coefficient__[i])
-            Lamda = self.__coherent_length__[self.__fundamental_mode_index__] * 2
-            Delta = np.real(self.__propagation_constant_2w__[i] - 2*self.__propagation_constant_w__)
-            AB = odeint(system, AB0.view(np.float64), self.__z__, args=(k, Lamda, Delta), rtol=self.__ODE_rtol__)
+        AB = np.zeros([len(self._z),2])
+        AB_sol = np.zeros([np.shape(self._E_2w_norm)[0], len(self._z), 2], dtype=np.complex128)
+        eta = np.zeros([np.shape(self._E_2w_norm)[0], len(self._z)])
+        for i in range(len(self._E_2w_norm)):
+            k = np.real(self._nonlinear_coupling_coefficient[i])
+            Lamda = self._coherent_length[self._fundamental_mode_index] * 2
+            Delta = np.real(self._propagation_constant_2w[i] - 2*self._propagation_constant_w)
+            AB = odeint(system, AB0.view(np.float64), self._z, args=(k, Lamda, Delta), rtol=self._ODE_rtol)
             AB = AB.view(np.complex128)
 
             eta[i] = (np.abs(AB[:, 1])/np.abs(AB0[0]))**2
 
             AB_sol[i] = AB
 
-        self.__amplitude_solutions__ = AB_sol
-        self.__conversion_efficiency__ = eta
+        self._amplitude_solutions = AB_sol
+        self._conversion_efficiency = eta
 
-        print("__solve_amplitude_coupled_ODEs__(): Solution to system computed.")
+        print("_solve_amplitude_coupled_ODEs(): Solution to system computed.")
 
     def update_values(self):
         print("update_values(): Updating values...")
-        self.__set_propagation_constant_w__()
-        self.__set_propagation_constant_2w__()
-        self.__set_normalisation_factor_w__()
-        self.__set_normalisation_factor_2w__()
-        self.__set_E_w_norm__()
-        self.__set_E_2w_norm__()
-        self.__set_effective_cross_section__()
-        self.__set_nonlinear_coupling_coefficient__()
+        self._set_propagation_constant_w()
+        self._set_propagation_constant_2w()
+        self._set_normalisation_factor_w()
+        self._set_normalisation_factor_2w()
+        self._set_E_w_norm()
+        self._set_E_2w_norm()
+        self._set_effective_cross_section()
+        self._set_nonlinear_coupling_coefficient()
         print("update_values(): Values updated.")
 
     def update_amplitude_coupled_ODEs_solution(self):
-        self.__solve_amplitude_coupled_ODEs__()
+        self._solve_amplitude_coupled_ODEs()
 
     def X(self):
-        return self.__X__
+        return self._X
 
     def Y(self):
-        return self.__Y__
+        return self._Y
 
     def E_w(self):
-        return self.__E_w__
+        return self._E_w
 
     def E_2w(self):
-        return self.__E_2w__
+        return self._E_2w
 
     def effective_mode_index_w(self):
-        return self.__effective_mode_index_w__
+        return self._effective_mode_index_w
 
     def effective_mode_index_2w(self):
-        return self.__effective_mode_index_2w__
+        return self._effective_mode_index_2w
 
     def lamda_w(self):
-        return self.__lamda_w__
+        return self._lamda_w
 
     def lamda_2w(self):
-        return self.__lamda_2w__
+        return self._lamda_2w
 
     def c(self):
-        return self.__c__
+        return self._c
 
     def mu_0(self):
-        return self.__mu_0__
+        return self._mu_0
 
     def epsilon_0(self):
-        return self.__epsilon_0__
+        return self._epsilon_0
 
     def omega_w(self):
-        return self.__omega_w__
+        return self._omega_w
 
     def omega_2w(self):
-        return self.__omega_2w__
+        return self._omega_2w
 
     def d_eff(self):
-        return self.__d_eff__
+        return self._d_eff
 
     def z_max(self):
-        return self.__z_max__
+        return self._z_max
 
     def z_points(self):
-        return self.__z_points__
+        return self._z_points
 
     def z(self):
-        return self.__z__
+        return self._z
 
     def ODE_rtol(self):
-        return self.__ODE_rtol__
+        return self._ODE_rtol
 
     def coherent_length(self):
-        return self.__coherent_length__
+        return self._coherent_length
 
     def inversion_period(self):
-        return self.__inversion_period__
+        return self._inversion_period
 
     def propagation_constant_w(self):
-        return self.__propagation_constant_w__
+        return self._propagation_constant_w
 
     def normalisation_factor_w(self):
-        return self.__normalisation_factor_w__
+        return self._normalisation_factor_w
 
     def propagation_constant_2w(self):
-        return self.__propagation_constant_2w__
+        return self._propagation_constant_2w
 
     def normalisation_factor_2w(self):
-        return self.__normalisation_factor_2w__
+        return self._normalisation_factor_2w
 
     def E_w_norm(self):
-        return self.__E_w_norm__
+        return self._E_w_norm
 
     def E_2w_norm(self):
-        return self.__E_2w_norm__
+        return self._E_2w_norm
 
     def effective_cross_section(self):
-        return self.__effective_cross_section__
+        return self._effective_cross_section
 
     def nonlinear_coupling_coefficient(self):
-        return self.__nonlinear_coupling_coefficient__
+        return self._nonlinear_coupling_coefficient
 
     def amplitude_solutions(self):
-        return self.__amplitude_solutions__
+        return self._amplitude_solutions
 
     def conversion_efficiency(self):
-        return self.__conversion_efficiency__
+        return self._conversion_efficiency
 
 
 class WaveguideResults(ReadInData, NonlinearOptics, Plot):
 
     def __init__(self, files, pump_fundamental_index=0, kwargs_NonLinearOptics={}, kwargs_ReadInData={},
                  kwargs_Data={}, kwargs_grid={}):
-        self.__files__ = files
-        self.__pump_fundamental_index__ = pump_fundamental_index
-        self.__kwargs_NonLinearOptics__ = kwargs_NonLinearOptics
-        self.__kwargs_ReadInData__ = kwargs_ReadInData
-        self.__kwargs_Data__ = self.__kwargs_ReadInData__
-        self.__kwargs_grid__ = kwargs_grid
+        self._files = files
+        self._pump_fundamental_index = pump_fundamental_index
+        self._kwargs_NonLinearOptics = kwargs_NonLinearOptics
+        self._kwargs_ReadInData = kwargs_ReadInData
+        self._kwargs_Data = self._kwargs_ReadInData
+        self._kwargs_grid = kwargs_grid
 
-        assert np.shape(self.__files__) == (3, )
+        assert np.shape(self._files) == (3, )
 
         for i in range(len(files)):
-            ReadInData.__init__(self, self.__files__[i],
-                                self.__kwargs_ReadInData__[i], print_details=False)
+            ReadInData.__init__(self, self._files[i],
+                                self._kwargs_ReadInData[i], print_details=False)
             if self.header()['Description'] == 'Electric field norm':
-                self.electricFieldNorm = Data(self.__files__[i],
-                                              self.__kwargs_ReadInData__[i],
-                                              self.__kwargs_Data__[i],
-                                              self.__kwargs_grid__)
+                self.electricFieldNorm = Data(self._files[i],
+                                              self._kwargs_ReadInData[i],
+                                              self._kwargs_Data[i],
+                                              self._kwargs_grid)
             elif self.header()['Description'] == 'Concentration':
-                self.concentration = Data(self.__files__[i],
-                                          self.__kwargs_ReadInData__[i],
-                                          self.__kwargs_Data__[i],
-                                          self.__kwargs_grid__)
+                self.concentration = Data(self._files[i],
+                                          self._kwargs_ReadInData[i],
+                                          self._kwargs_Data[i],
+                                          self._kwargs_grid)
             elif self.header()['Description'] == 'Effective mode index':
-                self.effectiveModeIndex = Data(self.__files__[i],
-                                               self.__kwargs_ReadInData__[i],
-                                               self.__kwargs_Data__[i],
-                                               self.__kwargs_grid__)
+                self.effectiveModeIndex = Data(self._files[i],
+                                               self._kwargs_ReadInData[i],
+                                               self._kwargs_Data[i],
+                                               self._kwargs_grid)
         
         Plot.__init__(self, self.electricFieldNorm.X(),
                       self.electricFieldNorm.Y())
@@ -1144,14 +1144,14 @@ class WaveguideResults(ReadInData, NonlinearOptics, Plot):
         self.E = self.electricFieldNorm.Data()[::-1]
         self.E = self.E*1.0E-6
         self.E_w = self.E[int(np.shape(self.electricFieldNorm.Data())[0]/2):]
-        self.E_w = self.E_w[self.__pump_fundamental_index__]
+        self.E_w = self.E_w[self._pump_fundamental_index]
 
         self.E_2w = self.E[:int(np.shape(self.electricFieldNorm.Data())[0]/2)]
 
 
         self.effective_mode_index_tmp = self.effectiveModeIndex.Data()[::-1]
         self.effective_mode_index_w = self.effective_mode_index_tmp[int(np.shape(self.effectiveModeIndex.Data())[0]/2):]
-        self.effective_mode_index_w = self.effective_mode_index_w[self.__pump_fundamental_index__, 0]
+        self.effective_mode_index_w = self.effective_mode_index_w[self._pump_fundamental_index, 0]
 
         self.effective_mode_index_2w = self.effective_mode_index_tmp[:int(np.shape(self.effectiveModeIndex.Data())[0]/2)]
         self.effective_mode_index_2w = self.effective_mode_index_2w[:,0]
@@ -1161,4 +1161,4 @@ class WaveguideResults(ReadInData, NonlinearOptics, Plot):
                                                self.E_w, self.E_2w,
                                                self.effective_mode_index_w,
                                                self.effective_mode_index_2w,
-                                               **self.__kwargs_NonLinearOptics__)
+                                               **self._kwargs_NonLinearOptics)
